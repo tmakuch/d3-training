@@ -32,19 +32,51 @@ export class DataComponent {
     }
 
     public drawBarCharts() {
-        
+        this.svg
+            .selectAll('rect')
+            .data(this.data)
+            .enter()
+            .append('rect')
+            .call(this.updateRectangle)
     }
 
     public addInteractions() {
-
+        this.svg.on('click', () => {
+            d3.select(d3.event.target).style('fill', 'green');
+        })
     }
 
     public addOne() {
         this.data.push({ id: this.data.length, value: this.randomOneElement() });
+
+        this.svg.selectAll('rect')
+            .data(this.data, this.getKeyFunction)
+            .enter()
+            .append('rect')
+            .transition()
+            .duration(500)
+            .call(this.updateRectangle);
     }
 
     public removeOne() {
         this.data.splice(2, 1);
+
+        let selection = this.svg
+            .selectAll('rect')
+            .data(this.data, this.getKeyFunction);
+
+        selection
+            .exit()
+            .transition()
+            .duration(500)
+            .attr('width', 0)
+            .remove();
+
+        selection
+            .transition()
+            .duration(500)
+            .delay(500)
+            .call(this.updateRectangle);
     }
 
     public changeData() {
@@ -53,6 +85,12 @@ export class DataComponent {
         } else {
             this.data = this.dataV1;
         }
+
+        this.svg.selectAll('rect')
+            .data(this.data, this.getKeyFunction)
+            .attr('width', (data) => data.value)
+
+        
     }
 
     public randomOneElement(): number {
@@ -65,5 +103,19 @@ export class DataComponent {
         for (let i = 0 ; i < count ; i++) {
             this.data.push({ id: i, value: this.randomOneElement() });
         }
+    }
+
+    private updateRectangle(selection) {
+        let rowHeight = 30;
+        selection
+            .attr('class', 'my-rect)')
+            .attr('x', 0)
+            .attr('y', (data, index) => index * (10 + rowHeight))
+            .attr('height', rowHeight)
+            .attr('width', (data) => data.value)
+    }
+
+    private getKeyFunction(data) {
+        return data.id;
     }
 }

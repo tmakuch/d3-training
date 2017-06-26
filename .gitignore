@@ -8,3 +8,5 @@ aot/*
 dist/*
 build/*
 yarn.lock
+.vscode
+.idea

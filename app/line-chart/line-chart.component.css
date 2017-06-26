@@ -11,3 +11,8 @@ svg {
     stroke: gray;
     stroke-width: 2px;
 }
+:host /deep/ svg .line {
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+}
